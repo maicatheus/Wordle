@@ -1,8 +1,17 @@
-from glob import glob
-from msilib import PID_TITLE
 from traceback import print_tb
+from unicodedata import normalize
+import random
 import pygame
 
+def gerSecretWord():
+    words = list()
+    with open("palavras.txt","r") as file:
+        
+        for w in file:
+            words.append(w.replace("\n",""))
+        
+        word = words[random.randint(0,len(words))]
+    return word
 colors = {
     "white":(255,255,255),
     "black":(0,0,0),
@@ -33,7 +42,8 @@ fps = 30
 timer  = pygame.time.Clock()
 textFont = pygame.font.Font(pygame.font.get_default_font(), 40)
 
-secretWord="NOBRE"
+secretWord= gerSecretWord().upper()
+print(secretWord)
 gameOver = False
 letters=0
 keepPlaying = True
@@ -62,6 +72,7 @@ def verifyWord():
             elif table[row][col] in secretWord and turn > row:
                  pygame.draw.rect(screen,colors["yellow"],[col*70+30,row*70+10,50,50],0,5)
 
+
 running = True
 while running:
     timer.tick(fps)
@@ -88,6 +99,7 @@ while running:
                         [" "," "," "," "," "],
                         [" "," "," "," "," "],
                         [" "," "," "," "," "]]
+                secretWord= gerSecretWord().upper()
 
         if event.type== pygame.TEXTINPUT and keepPlaying and not gameOver:
             playerInput = event.__getattribute__("text").upper()
@@ -108,8 +120,10 @@ while running:
     if turn == 6:
         gameOver = True
         drawGameOver("red")
-        loser = textFont.render("You lose!", True, colors["black"])
+        loser = textFont.render(f"You lose!", True, colors["black"])
+        awnser = textFont.render(f"word:{secretWord}!", True, colors["black"])
         screen.blit(loser,(110,(height/2)-50))
+        screen.blit(awnser,(70,(height/2)-200))
     
     if gameOver and turn < 6:
         drawGameOver("green")
